@@ -10,7 +10,7 @@ namespace _2048
 
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
-                for (int j = 0; i < matrix.GetLength(1); i++)
+                for (int j = 0; j < matrix.GetLength(1); j++)
                 {
                     if (matrix[i, j] == 0) 
                     { 
@@ -56,6 +56,8 @@ namespace _2048
                     break;
                 }
             }
+
+            bool one = true;
             if (hasZero)
             {
                 int step = rand.Next(33)+1;
@@ -67,10 +69,10 @@ namespace _2048
                         {
                             if (matrix[i, j] == 0)
                             {
-                                step--;
+                                --step;
                             }
 
-                            if (step == 0)
+                            if (step == 0 && matrix[i, j] == 0)
                             {
                                 matrix[i, j] = 2;
                             }
@@ -82,6 +84,7 @@ namespace _2048
         }
         static int[,] Move(int[,] matrix, out int plusScore )
         {
+            
             plusScore = 0;
             int move = 0;
             ConsoleKeyInfo moveKey = Console.ReadKey();
@@ -113,20 +116,21 @@ namespace _2048
                     {
                         for (int i = 0; i < matrix.GetLength(0)-1; i++)
                         {
-                            for (int k = i; k >=0 ; k--)
+                            for (int k = i; k >= 0 ; k--)
                             {
-                                if (matrix[k, j] == 0 && matrix[k + 1, j] > 0) 
-                                {
-                                    matrix[k, j] = matrix[k + 1, j];
-                                    matrix[k + 1, j] = 0;
-                                    isMoved = true;
-                                }
-                                
                                 if (matrix[k, j] == matrix[k + 1, j] && matrix[k, j] > 0)
                                 {
                                     matrix[k, j] += matrix[k + 1, j];
                                     matrix[k + 1, j] = 0;
                                     plusScore += matrix[k, j];
+
+                                    isMoved = true;
+                                }
+
+                                if (matrix[k, j] == 0 && matrix[k + 1, j] > 0)
+                                {
+                                    matrix[k, j] = matrix[k + 1, j];
+                                    matrix[k + 1, j] = 0;
                                     isMoved = true;
                                 }
                             }
@@ -175,7 +179,6 @@ namespace _2048
 
                                 if (matrix[i, k] == matrix[i, k + 1] && matrix[i, k] > 0)
                                 {
-
                                     isMoved = true;
                                     matrix[i, k] += matrix[i, k + 1];
                                     matrix[i, k + 1] = 0;
@@ -192,19 +195,19 @@ namespace _2048
                         {
                             for (int k = 1; k <= j; k++)
                             {
-                                if (matrix[i, k] == 0 && matrix[i, k - 1] > 0)
-                                {
-                                    isMoved = true;
-                                    matrix[i, k] = matrix[i, k - 1];
-                                    matrix[i, k - 1] = 0;
-                                }
-
+                                
                                 if (matrix[i, k] == matrix[i, k - 1] && matrix[i, k] > 0)
                                 {
                                     isMoved = true;
                                     matrix[i, k] += matrix[i, k - 1];
                                     matrix[i, k - 1] = 0;
                                     plusScore += matrix[i, k];
+                                }
+                                if (matrix[i, k] == 0 && matrix[i, k - 1] > 0)
+                                {
+                                    isMoved = true;
+                                    matrix[i, k] = matrix[i, k - 1];
+                                    matrix[i, k - 1] = 0;
                                 }
                             }
                         }
@@ -214,13 +217,17 @@ namespace _2048
                     break;
             }
 
+            
             if (move == 0)
             {
                 return matrix;
             }
             else
             {
-                matrix = AddNew(matrix);
+                if (isMoved)
+                {
+                    matrix = AddNew(matrix);
+                }
                 return matrix;
             }
         }
@@ -254,9 +261,17 @@ namespace _2048
             while (!isReady);
             return matrixOut;
         }
-
         static void Show(int[,] matrix) 
         {
+            int[,] colors = new int [2,14];
+            int num = 2;
+            
+            for (int i = 0; i < 14; i++)
+            {
+                colors[0, i] = num;
+                colors[1, i] = i + 2;
+                num += num;
+            }     
 
             string tab = "~~~"; matrix.GetLength(1);
             for (int i = 0; i < (matrix.GetLength(1))*8; i++)
@@ -264,20 +279,34 @@ namespace _2048
                 tab += "~";
             }
 
-            Console.WriteLine("\n"+ tab);
+            Console.WriteLine("\n\t"+ tab);
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
+                Console.Write("\t");
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
                     Console.Write("| \t ");
                 }
                 Console.WriteLine(" |");
-
+                Console.Write("\t");
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
+                    
+                    
                     if (matrix[i, j] > 0)
                     {
-                        Console.Write("| " + matrix[i, j] + "\t ");
+                        Console.Write("| ");
+                        for (int k = 0; k < 14; k++)
+                        {
+                            if (colors[0, k] == matrix[i, j])
+                            {
+                                Console.ForegroundColor = (ConsoleColor)colors[1, k];
+                                break;
+                            }
+                        }
+                        Console.Write(matrix[i, j]);
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write("\t ");
                     }
                     else
                     {
@@ -285,11 +314,12 @@ namespace _2048
                     }
                 }
                 Console.WriteLine(" |");
+                Console.Write("\t");
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
                     Console.Write("| \t ");
                 }
-                Console.WriteLine(" |\n"+tab);
+                Console.WriteLine(" |\n\t"+tab);
             }
         }
         static void Main(string[] args)
@@ -306,27 +336,34 @@ namespace _2048
                 do
                 {
                     Console.Clear();
-                    Show(matrix);
-                    Console.WriteLine("\n\t Score : " + score + "\n");
-                    matrix = Move(matrix, out int plusScore);
-                    score += plusScore;
                     canMove = CanPlay(matrix);
+                    Show(matrix);
+                    if (canMove)
+                    {
+                        Console.WriteLine("\n\t\t Score : " + score + "\n");
+                        matrix = Move(matrix, out int plusScore);
+                        score += plusScore;
+                    }
                 } while (canMove);
-                
-                if (bestScore < score)
+                do
                 {
-                    bestScore = score;
-                    Console.WriteLine("Your score is the BEST :");
-                    Console.WriteLine("Your score is :" + score);
-                }
-                else 
-                {
-                    Console.WriteLine("Your score :" + score + "\nBest Score :" + bestScore);
-                }
-                
-                Console.WriteLine("Press any - Restar ;");
-                Console.WriteLine("Press Esc - Exit ;");
-                key = Console.ReadKey();
+                    Console.Clear();
+                    Show(matrix);
+                    Console.WriteLine("\n");
+                    if (bestScore <= score)
+                    {
+                        bestScore = score;
+                        Console.WriteLine("\t Your Score is the BEST :" + score);
+                    }
+                    else
+                    {
+                        Console.WriteLine("\t Your score :" + score + "\n\t Best Score :" + bestScore);
+                    }
+
+                    Console.WriteLine("\t Press Enter - Restar ;");
+                    Console.WriteLine("\t Press Esc - Exit ;");
+                    key = Console.ReadKey();
+                } while (key.Key != ConsoleKey.Escape || key.Key != ConsoleKey.Enter);
             } while (key.Key != ConsoleKey.Escape);
         }
     }
