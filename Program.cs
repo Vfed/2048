@@ -27,21 +27,24 @@ namespace _2048
             if (hasZero)
             {
                 int step = rand.Next(33)+1;
-                for (int i = 0; i < matrix.GetLength(0); i++)
+                do
                 {
-                    for (int j = 0; j < matrix.GetLength(1); j++)
+                    for (int i = 0; i < matrix.GetLength(0); i++)
                     {
-                        if (matrix[i, j] == 0)
+                        for (int j = 0; j < matrix.GetLength(1); j++)
                         {
-                            step--;
-                        }
+                            if (matrix[i, j] == 0)
+                            {
+                                step--;
+                            }
 
-                        if (step == 0)
-                        {
-                            matrix[i, j] = 2;
+                            if (step == 0)
+                            {
+                                matrix[i, j] = 2;
+                            }
                         }
                     }
-                }
+                } while (step > 0);
             }
             return matrix;
         }
@@ -187,6 +190,7 @@ namespace _2048
             }
             else
             {
+                matrix = AddNew(matrix);
                 return matrix;
             }
         }
@@ -275,7 +279,6 @@ namespace _2048
                     Show(matrix);
                     Console.WriteLine("\n\t Score : " + score);
                     matrix = Move(matrix, out int plusScore);
-                    matrix = AddNew(matrix);
                     score += plusScore;
                 } while (canMove);
                 
