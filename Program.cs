@@ -4,9 +4,41 @@ namespace _2048
 {
     class Program
     {
+        static bool CanPlay(int[,] matrix) 
+        {
+            bool canPlay = false;
+
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                for (int j = 0; i < matrix.GetLength(1); i++)
+                {
+                    if (matrix[i, j] == 0) 
+                    { 
+                        canPlay = true;
+                    }
+
+                    if (j < matrix.GetLength(1) - 1) 
+                    {
+                        if (matrix[i, j] == matrix[i, j + 1]) 
+                        {
+                            canPlay = true;
+                        }
+                    }
+
+                    if (i < matrix.GetLength(0)- 1)
+                    {
+                        if (matrix[i, j] == matrix[i + 1, j])
+                        {
+                            canPlay = true;
+                        }
+                    }
+                }
+            }
+
+            return canPlay;
+        }
         static int[,] AddNew(int[,] matrix)
         {
-            
             bool hasZero = false;
             Random rand = new Random();
             for (int i = 0; i < matrix.GetLength(0); i++)
@@ -110,7 +142,6 @@ namespace _2048
                             {
                                 if (matrix[k, j] == 0 && matrix[k - 1, j] > 0)
                                 {
-
                                     isMoved = true;
                                     matrix[k, j] = matrix[k - 1, j];
                                     matrix[k - 1, j] = 0;
@@ -163,7 +194,6 @@ namespace _2048
                             {
                                 if (matrix[i, k] == 0 && matrix[i, k - 1] > 0)
                                 {
-
                                     isMoved = true;
                                     matrix[i, k] = matrix[i, k - 1];
                                     matrix[i, k - 1] = 0;
@@ -277,9 +307,10 @@ namespace _2048
                 {
                     Console.Clear();
                     Show(matrix);
-                    Console.WriteLine("\n\t Score : " + score);
+                    Console.WriteLine("\n\t Score : " + score + "\n");
                     matrix = Move(matrix, out int plusScore);
                     score += plusScore;
+                    canMove = CanPlay(matrix);
                 } while (canMove);
                 
                 if (bestScore < score)
