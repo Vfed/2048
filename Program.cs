@@ -4,6 +4,42 @@ namespace _2048
 {
     class Program
     {
+        static void ChCol(int col) 
+        {
+            int[] colors = new int[16];
+            for (int i = 0; i < 16; i++)
+            {
+                colors[i] = i;
+            }
+            Console.ForegroundColor = (ConsoleColor)colors[col];
+        }
+        static void ShowLabel()
+        {
+
+            Random r = new Random();
+            int[] color2 = new int[4] { r.Next(14) + 1, r.Next(14) + 1, r.Next(0, 14)+1, r.Next(14)+1 };
+            string[,] label = new string[5, 4]{ 
+                { "   22   ","   00  ","     4  ","   88   "},
+                { "  2  2  ","  0  0 ","    44  ","  8  8  "},
+                { "    2   ","  0  0 ","   4 4  ","   88   "},
+                { "   2    ","  0  0 ","  4444  ","  8  8  "},
+                { "  2222  ","   00  ","     4  ","   88   "} };
+            Console.WriteLine("\n");
+            for (int i = 0; i < 5; i++)
+            {
+                Console.Write("\t");
+                for (int j = 0; j < 4; j++)
+                {
+                    Console.Write("/");
+                    ChCol(color2[j]);
+                    Console.Write(label[i,j]);
+                    ChCol(15);
+                }
+                Console.Write("/\n");
+            }
+            ChCol(15);
+
+        }
         static bool CanPlay(int[,] matrix) 
         {
             bool canPlay = false;
@@ -337,10 +373,16 @@ namespace _2048
                 {
                     Console.Clear();
                     canMove = CanPlay(matrix);
-                    Show(matrix);
+                   
                     if (canMove)
                     {
-                        Console.WriteLine("\n\t\t Score : " + score + "\n");
+                        if (bestScore < score)
+                        {
+                            bestScore = score;
+                        }
+                        ShowLabel();
+                        Console.WriteLine("\n\t   Score : " + score + "\t Best Score : " + bestScore);
+                        Show(matrix);
                         matrix = Move(matrix, out int plusScore);
                         score += plusScore;
                     }
@@ -348,22 +390,21 @@ namespace _2048
                 do
                 {
                     Console.Clear();
-                    Show(matrix);
-                    Console.WriteLine("\n");
+                    ShowLabel();
                     if (bestScore <= score)
                     {
                         bestScore = score;
-                        Console.WriteLine("\t Your Score is the BEST :" + score);
+                        Console.WriteLine("\t   Your Score is the BEST : " + score);
                     }
                     else
                     {
-                        Console.WriteLine("\t Your score :" + score + "\n\t Best Score :" + bestScore);
+                        Console.WriteLine("\t Your score :" + score + "\n\t Best Score : " + bestScore);
                     }
-
-                    Console.WriteLine("\t Press Enter - Restar ;");
-                    Console.WriteLine("\t Press Esc - Exit ;");
+                    Show(matrix);
+                    Console.WriteLine("\n\t Press Enter - Restar ;");
+                    Console.WriteLine("\n\t Press Esc - Exit ;");
                     key = Console.ReadKey();
-                } while (key.Key != ConsoleKey.Escape || key.Key != ConsoleKey.Enter);
+                } while (key.Key != ConsoleKey.Escape && key.Key != ConsoleKey.Enter);
             } while (key.Key != ConsoleKey.Escape);
         }
     }
