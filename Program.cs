@@ -273,6 +273,7 @@ namespace _2048
                 {
                     Console.Clear();
                     Show(matrix);
+                    Console.WriteLine("\n\t Score : " + score);
                     matrix = Move(matrix, out int plusScore);
                     matrix = AddNew(matrix);
                     score += plusScore;
