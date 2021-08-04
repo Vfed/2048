@@ -26,21 +26,19 @@ namespace _2048
                 { "    2   ","  0  0 ","   4 4  ","   88   "},
                 { "   2    ","  0  0 ","  4444  ","  8  8  "},
                 { "  2222  ","   00  ","     4  ","   88   "} };
-            Console.WriteLine("\n");
+
+            Console.WriteLine("");
             for (int i = 0; i < 5; i++)
             {
                 Console.Write("\t");
                 for (int j = 0; j < 4; j++)
                 {
-                    Console.Write("/");
-                    ChCol(color2[j]);
-                    Console.Write(label[i, j]);
-                    ChCol(15);
+                    ToConsole("/",9);
+                    ToConsole(label[i, j], color2[j]);
+                    
                 }
-                Console.Write("/\n");
+                ToConsole("/\n",9);
             }
-            ChCol(15);
-
         }
         static bool CanPlay(int[,] matrix)
         {
@@ -135,27 +133,30 @@ namespace _2048
             }
             return matrix;
         }
-        static int[,] Move(int[,] matrix, out int plusScore, int newElems)
+        static int[,] Move(int[,] matrix, out int plusScore, int newElems, out bool escape )
         {
-
+            escape = true;
             plusScore = 0;
             int move = 0;
             ConsoleKeyInfo moveKey = Console.ReadKey();
 
             switch (moveKey.Key)
             {
-                case ConsoleKey.UpArrow:
+                case ConsoleKey.W:
                     move = 1;
                     break;
-                case ConsoleKey.DownArrow:
+                case ConsoleKey.S:
                     move = 2;
                     break;
-                case ConsoleKey.LeftArrow:
+                case ConsoleKey.A:
                     move = 3;
                     break;
-                case ConsoleKey.RightArrow:
+                case ConsoleKey.D:
                     move = 4;
                     break;
+                case ConsoleKey.Backspace:
+                    escape = false;
+                    return matrix;
                 default:
                     break;
             }
@@ -331,23 +332,23 @@ namespace _2048
             {
                 tab += "~";
             }
-
-            Console.WriteLine("\n\t" + tab);
+            
+            ToConsole("\n\t"+tab+"\n" , 14);
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
                 Console.Write("\t");
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
-                    Console.Write("| \t ");
+                    ToConsole("| \t ",12);
                 }
-                Console.WriteLine(" |");
+                ToConsole(" |\n",12);
                 Console.Write("\t");
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
 
                     if (matrix[i, j] > 0)
                     {
-                        Console.Write("| ");
+                        ToConsole("| ",3);
                         for (int k = 0; k < 14; k++)
                         {
                             if (colors[0, k] == matrix[i, j])
@@ -362,16 +363,17 @@ namespace _2048
                     }
                     else
                     {
-                        Console.Write("| \t ");
+                        ToConsole("| \t ",3);
                     }
                 }
-                Console.WriteLine(" |");
+                ToConsole(" |\n",3);
                 Console.Write("\t");
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
-                    Console.Write("| \t ");
+                    ToConsole("| \t ",6);
                 }
-                Console.WriteLine(" |\n\t" + tab);
+                ToConsole(" |",6);
+                ToConsole("\n\t" + tab + "\n", 14); 
             }
         }
         static int matrixSize()
@@ -478,6 +480,22 @@ namespace _2048
 
             return count;
         }
+        static void ToConsole(string str, int col = 15)
+        {
+            if (col < 16 && col >= 0)
+            {
+                Console.ForegroundColor = (ConsoleColor)col;
+                Console.Write(str);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.ForegroundColor = (ConsoleColor)col;
+                Console.Write(str);
+                Console.ResetColor();
+            }
+            
+        }
         static void Main(string[] args)
         {
             int bestScore = 0;
@@ -503,8 +521,9 @@ namespace _2048
                         }
                         ShowLabel();
                         Console.WriteLine("\n\t   Score : " + score + "\t Best Score : " + bestScore);
+                        Console.WriteLine("\n\t   Controls : Up(W), Down(S), Left(A), Right(D), End Game (Backspace) ;");
                         Show(matrix);
-                        matrix = Move(matrix, out int plusScore, newCount);
+                        matrix = Move(matrix, out int plusScore, newCount, out canMove);
                         score += plusScore;
                     }
                 } while (canMove);
@@ -515,11 +534,12 @@ namespace _2048
                     if (bestScore <= score)
                     {
                         bestScore = score;
-                        Console.WriteLine("\t Your Score is the BEST : " + score);
+
+                        ToConsole("\n\t Your Score is the BEST : " + score + "\n", 3);
                     }
                     else
                     {
-                        Console.WriteLine("\t Your score :" + score + "\n\t Best Score : " + bestScore);
+                        ToConsole("\t Your score :" + score + "\n\t Best Score : " + bestScore + "\n", 3);
                     }
                     Show(matrix);
                     Console.WriteLine("\n\t Press Enter - Restar ;");
