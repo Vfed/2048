@@ -306,22 +306,20 @@ namespace _2048
         }
         static void Show(int[,] matrix)
         {
-            int[,] colors = new int[2, 14];
+            int[] colors = new int[14];
             int num = 2;
 
             for (int i = 0; i < 14; i++)
             {
-                colors[0, i] = num;
-                colors[1, i] = i + 2;
+                colors[i] = num;
                 num += num;
             }
-
+            
             string tab = "~~~"; matrix.GetLength(1);
             for (int i = 0; i < (matrix.GetLength(1)) * 8; i++)
             {
                 tab += "~";
             }
-            
             ToConsole("\n\t"+tab+"\n" , 14);
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
@@ -340,14 +338,12 @@ namespace _2048
                         ToConsole("| ",3);
                         for (int k = 0; k < 14; k++)
                         {
-                            if (colors[0, k] == matrix[i, j])
+                            if (colors[k] == matrix[i, j])
                             {
-                                Console.ForegroundColor = (ConsoleColor)colors[1, k];
+                                ToConsole( matrix[i, j]+"" ,k);
                                 break;
                             }
                         }
-                        Console.Write(matrix[i, j]);
-                        Console.ForegroundColor = ConsoleColor.White;
                         Console.Write("\t ");
                     }
                     else
