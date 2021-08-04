@@ -4,21 +4,23 @@ namespace _2048
 {
     class Program
     {
-        static void ChCol(int col) 
+        static void ChCol(int col)
         {
-            int[] colors = new int[16];
-            for (int i = 0; i < 16; i++)
+            if (col < 16 && col >= 0)
             {
-                colors[i] = i;
+                Console.ForegroundColor = (ConsoleColor)col;
             }
-            Console.ForegroundColor = (ConsoleColor)colors[col];
+            else
+            {
+                Console.ForegroundColor = (ConsoleColor)col;
+            }
         }
         static void ShowLabel()
         {
 
             Random r = new Random();
-            int[] color2 = new int[4] { r.Next(14) + 1, r.Next(14) + 1, r.Next(0, 14)+1, r.Next(14)+1 };
-            string[,] label = new string[5, 4]{ 
+            int[] color2 = new int[4] { r.Next(14) + 1, r.Next(14) + 1, r.Next(0, 14) + 1, r.Next(14) + 1 };
+            string[,] label = new string[5, 4]{
                 { "   22   ","   00  ","     4  ","   88   "},
                 { "  2  2  ","  0  0 ","    44  ","  8  8  "},
                 { "    2   ","  0  0 ","   4 4  ","   88   "},
@@ -32,7 +34,7 @@ namespace _2048
                 {
                     Console.Write("/");
                     ChCol(color2[j]);
-                    Console.Write(label[i,j]);
+                    Console.Write(label[i, j]);
                     ChCol(15);
                 }
                 Console.Write("/\n");
@@ -40,7 +42,7 @@ namespace _2048
             ChCol(15);
 
         }
-        static bool CanPlay(int[,] matrix) 
+        static bool CanPlay(int[,] matrix)
         {
             bool canPlay = false;
 
@@ -48,20 +50,20 @@ namespace _2048
             {
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
-                    if (matrix[i, j] == 0) 
-                    { 
+                    if (matrix[i, j] == 0)
+                    {
                         canPlay = true;
                     }
 
-                    if (j < matrix.GetLength(1) - 1) 
+                    if (j < matrix.GetLength(1) - 1)
                     {
-                        if (matrix[i, j] == matrix[i, j + 1]) 
+                        if (matrix[i, j] == matrix[i, j + 1])
                         {
                             canPlay = true;
                         }
                     }
 
-                    if (i < matrix.GetLength(0)- 1)
+                    if (i < matrix.GetLength(0) - 1)
                     {
                         if (matrix[i, j] == matrix[i + 1, j])
                         {
@@ -73,70 +75,85 @@ namespace _2048
 
             return canPlay;
         }
-        static int[,] AddNew(int[,] matrix)
+        static int[,] AddNew(int[,] matrix, int newElems)
         {
             bool hasZero = false;
             Random rand = new Random();
+            int zeroCount = 0;
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
-                    if (matrix[i, j] == 0) 
+                    if (matrix[i, j] == 0)
                     {
+                        zeroCount++;
                         hasZero = true;
-                        break;
                     }
-                }
-                if (hasZero) 
-                {
-                    break;
                 }
             }
 
-            bool one = true;
-            if (hasZero)
+            if (newElems >= zeroCount)
             {
-                int step = rand.Next(33)+1;
-                do
+                for (int i = 0; i < matrix.GetLength(0); i++)
                 {
-                    for (int i = 0; i < matrix.GetLength(0); i++)
+                    for (int j = 0; j < matrix.GetLength(1); j++)
                     {
-                        for (int j = 0; j < matrix.GetLength(1); j++)
+                        if (matrix[i, j] == 0)
                         {
-                            if (matrix[i, j] == 0)
-                            {
-                                --step;
-                            }
-
-                            if (step == 0 && matrix[i, j] == 0)
-                            {
-                                matrix[i, j] = 2;
-                            }
+                            matrix[i, j] = 2;
                         }
                     }
-                } while (step > 0);
+                }
+            }
+            else
+            {
+                for (int k = 0; k < newElems; k++)
+                {
+                    if (hasZero)
+                    {
+                        int step = rand.Next(zeroCount) + 1;
+                        do
+                        {
+                            for (int i = 0; i < matrix.GetLength(0); i++)
+                            {
+                                for (int j = 0; j < matrix.GetLength(1); j++)
+                                {
+                                    if (matrix[i, j] == 0)
+                                    {
+                                        --step;
+                                    }
+
+                                    if (step == 0 && matrix[i, j] == 0)
+                                    {
+                                        matrix[i, j] = 2;
+                                    }
+                                }
+                            }
+                        } while (step > 0);
+                    }
+                }
             }
             return matrix;
         }
-        static int[,] Move(int[,] matrix, out int plusScore )
+        static int[,] Move(int[,] matrix, out int plusScore, int newElems)
         {
-            
+
             plusScore = 0;
             int move = 0;
             ConsoleKeyInfo moveKey = Console.ReadKey();
 
             switch (moveKey.Key)
             {
-                case ConsoleKey.W:
+                case ConsoleKey.UpArrow:
                     move = 1;
                     break;
-                case ConsoleKey.S:
+                case ConsoleKey.DownArrow:
                     move = 2;
                     break;
-                case ConsoleKey.A:
+                case ConsoleKey.LeftArrow:
                     move = 3;
                     break;
-                case ConsoleKey.D:
+                case ConsoleKey.RightArrow:
                     move = 4;
                     break;
                 default:
@@ -150,9 +167,9 @@ namespace _2048
                 case 1:
                     for (int j = 0; j < matrix.GetLength(1); j++)
                     {
-                        for (int i = 0; i < matrix.GetLength(0)-1; i++)
+                        for (int i = 0; i < matrix.GetLength(0) - 1; i++)
                         {
-                            for (int k = i; k >= 0 ; k--)
+                            for (int k = i; k >= 0; k--)
                             {
                                 if (matrix[k, j] == matrix[k + 1, j] && matrix[k, j] > 0)
                                 {
@@ -176,7 +193,7 @@ namespace _2048
                 case 2:
                     for (int j = 0; j < matrix.GetLength(1); j++)
                     {
-                        for (int i = matrix.GetLength(0)-1; i > 0 ; i--)
+                        for (int i = matrix.GetLength(0) - 1; i > 0; i--)
                         {
                             for (int k = 1; k <= i; k++)
                             {
@@ -231,7 +248,7 @@ namespace _2048
                         {
                             for (int k = 1; k <= j; k++)
                             {
-                                
+
                                 if (matrix[i, k] == matrix[i, k - 1] && matrix[i, k] > 0)
                                 {
                                     isMoved = true;
@@ -253,7 +270,7 @@ namespace _2048
                     break;
             }
 
-            
+
             if (move == 0)
             {
                 return matrix;
@@ -262,17 +279,17 @@ namespace _2048
             {
                 if (isMoved)
                 {
-                    matrix = AddNew(matrix);
+                    matrix = AddNew(matrix, newElems);
                 }
                 return matrix;
             }
         }
-        static int[,] Init()
+        static int[,] Init(int size)
         {
-            int[,] matrixOut = new int[4, 4];
-            for (int i = 0; i < 4; i++)
+            int[,] matrixOut = new int[size, size];
+            for (int i = 0; i < matrixOut.GetLength(0); i++)
             {
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < matrixOut.GetLength(1); j++)
                 {
                     matrixOut[i, j] = 0;
                 }
@@ -284,12 +301,12 @@ namespace _2048
             {
                 int x = rand.Next(4);
                 int y = rand.Next(4);
-                if (matrixOut[x, y] == 0) 
+                if (matrixOut[x, y] == 0)
                 {
                     matrixOut[x, y] += 2;
                     k--;
                 }
-                if (k == 0) 
+                if (k == 0)
                 {
                     isReady = true;
                 }
@@ -297,25 +314,25 @@ namespace _2048
             while (!isReady);
             return matrixOut;
         }
-        static void Show(int[,] matrix) 
+        static void Show(int[,] matrix)
         {
-            int[,] colors = new int [2,14];
+            int[,] colors = new int[2, 14];
             int num = 2;
-            
+
             for (int i = 0; i < 14; i++)
             {
                 colors[0, i] = num;
                 colors[1, i] = i + 2;
                 num += num;
-            }     
+            }
 
             string tab = "~~~"; matrix.GetLength(1);
-            for (int i = 0; i < (matrix.GetLength(1))*8; i++)
+            for (int i = 0; i < (matrix.GetLength(1)) * 8; i++)
             {
                 tab += "~";
             }
 
-            Console.WriteLine("\n\t"+ tab);
+            Console.WriteLine("\n\t" + tab);
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
                 Console.Write("\t");
@@ -327,8 +344,7 @@ namespace _2048
                 Console.Write("\t");
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
-                    
-                    
+
                     if (matrix[i, j] > 0)
                     {
                         Console.Write("| ");
@@ -355,25 +371,130 @@ namespace _2048
                 {
                     Console.Write("| \t ");
                 }
-                Console.WriteLine(" |\n\t"+tab);
+                Console.WriteLine(" |\n\t" + tab);
             }
+        }
+        static int matrixSize()
+        {
+            string error = "";
+            int size = 0;
+            bool sizeCheck = false;
+            do
+            {
+                Console.Clear();
+                ShowLabel();
+                if (error.Length > 0)
+                {
+                    Console.WriteLine("\n\t" + error);
+                }
+                error = "";
+                Console.Write("\n\t Set fild size (4-10) :");
+                sizeCheck = Int32.TryParse(Console.ReadLine(), out size);
+                if (size < 4 || size > 10)
+                {
+                    error = " Wrong enter? try again ; ";
+                    sizeCheck = false;
+                }
+            }
+            while (!sizeCheck);
+
+            return size;
+        }
+        static void gameOptions(out int size, out int newElems)
+        {
+            string error = "";
+            size = 4;
+            newElems = 1;
+            int chose = 0;
+            bool checkEnter = false;
+            do
+            {
+                Console.Clear();
+                ShowLabel();
+                if (error.Length > 0)
+                {
+                    Console.WriteLine("\n\t " + error);
+                }
+                error = "";
+                Console.WriteLine("\n\t Chose Game Options ( Field size / New elements frequency ) : \n");
+                Console.WriteLine("\t\t1. Field 4x4, New elements 1 ;");
+                Console.WriteLine("\t\t2. Field 5x5, New elements 2 ;");
+                Console.WriteLine("\t\t3. Field 6x6, New elements 3 ;");
+                Console.WriteLine("\t\t4. Field 10x10, New elements 100 ;");
+                Console.WriteLine("\t\t5. I'll do it myself !!! ;");
+                checkEnter = Int32.TryParse(Console.ReadLine(), out chose);
+
+                if (!checkEnter)
+                {
+                    error = "Wrong enter? try again ; ";
+                    continue;
+                }
+
+                switch (chose)
+                {
+                    case 1:
+                        size = 4;
+                        newElems = 1;
+                        return;
+                    case 2:
+                        size = 5;
+                        newElems = 2;
+                        return;
+                    case 3:
+                        size = 6;
+                        newElems = 3;
+                        return;
+                    case 4:
+                        size = 10;
+                        newElems = 100;
+                        return;
+                    case 5:
+                        size = matrixSize();
+                        newElems = newElemsNumber();
+                        return;
+                    default:
+                        error = "Wrong enter? try again ; ";
+                        continue;
+                }
+
+            }
+            while (!checkEnter);
+        }
+        static int newElemsNumber()
+        {
+            int count = 0;
+            bool countCheck = false;
+            do
+            {
+                Console.Write("\n\t Set new elements apear count (1-100) :");
+                countCheck = Int32.TryParse(Console.ReadLine(), out count);
+                if (count < 1 || count > 100)
+                {
+                    Console.WriteLine("\n\t Wrong enter? try again ; ");
+                    countCheck = false;
+                }
+            }
+            while (!countCheck);
+
+            return count;
         }
         static void Main(string[] args)
         {
             int bestScore = 0;
             bool canMove = true;
-            int[,] matrix = new int[4,4];
-
+            int[,] matrix;
+            int size = 0;
+            int newCount = 0;
             ConsoleKeyInfo key;
             do
             {
-                matrix = Init();
+                gameOptions(out size, out newCount);
+                matrix = Init(size);
                 int score = 0;
                 do
                 {
                     Console.Clear();
                     canMove = CanPlay(matrix);
-                   
                     if (canMove)
                     {
                         if (bestScore < score)
@@ -383,7 +504,7 @@ namespace _2048
                         ShowLabel();
                         Console.WriteLine("\n\t   Score : " + score + "\t Best Score : " + bestScore);
                         Show(matrix);
-                        matrix = Move(matrix, out int plusScore);
+                        matrix = Move(matrix, out int plusScore, newCount);
                         score += plusScore;
                     }
                 } while (canMove);
@@ -394,7 +515,7 @@ namespace _2048
                     if (bestScore <= score)
                     {
                         bestScore = score;
-                        Console.WriteLine("\t   Your Score is the BEST : " + score);
+                        Console.WriteLine("\t Your Score is the BEST : " + score);
                     }
                     else
                     {
