@@ -10,11 +10,11 @@ namespace _2048
             Random r = new Random();
             int[] color2 = new int[4] { r.Next(14) + 1, r.Next(14) + 1, r.Next(0, 14) + 1, r.Next(14) + 1 };
             string[,] label = new string[5, 4]{
-                { "   22   ","   00  ","     4  ","   88   "},
-                { "  2  2  ","  0  0 ","    44  ","  8  8  "},
-                { "    2   ","  0  0 ","   4 4  ","   88   "},
-                { "   2    ","  0  0 ","  4444  ","  8  8  "},
-                { "  2222  ","   00  ","     4  ","   88   "} };
+                { "   22   ","   00   ","     4  ","   88   "},
+                { "  2  2  ","  0  0  ","    44  ","  8  8  "},
+                { "    2   ","  0  0  ","   4 4  ","   88   "},
+                { "   2    ","  0  0  ","  4444  ","  8  8  "},
+                { "  2222  ","   00   ","     4  ","   88   "} };
 
             Console.WriteLine("");
             for (int i = 0; i < 5; i++)
@@ -340,7 +340,7 @@ namespace _2048
                         {
                             if (colors[k] == matrix[i, j])
                             {
-                                ToConsole( matrix[i, j]+"" ,k);
+                                ToConsole( matrix[i, j]+"" ,k+1);
                                 break;
                             }
                         }
