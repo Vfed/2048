@@ -4,17 +4,6 @@ namespace _2048
 {
     class Program
     {
-        static void ChCol(int col)
-        {
-            if (col < 16 && col >= 0)
-            {
-                Console.ForegroundColor = (ConsoleColor)col;
-            }
-            else
-            {
-                Console.ForegroundColor = (ConsoleColor)col;
-            }
-        }
         static void ShowLabel()
         {
 
