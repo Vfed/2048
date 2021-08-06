@@ -159,22 +159,21 @@ namespace _2048
                     {
                         for (int i = 0; i < matrix.GetLength(0) - 1; i++)
                         {
-                            for (int k = i; k >= 0; k--)
+                            for (int k = i+1; k < matrix.GetLength(0); k++)
                             {
-                                if (matrix[k, j] == matrix[k + 1, j] && matrix[k, j] > 0)
+                                if (matrix[i, j] == 0 && matrix[k, j] > 0)
                                 {
-                                    matrix[k, j] += matrix[k + 1, j];
-                                    matrix[k + 1, j] = 0;
-                                    plusScore += matrix[k, j];
-
+                                    matrix[i, j] = matrix[k, j];
+                                    matrix[k, j] = 0;
                                     isMoved = true;
                                 }
-
-                                if (matrix[k, j] == 0 && matrix[k + 1, j] > 0)
+                                if (matrix[i, j] == matrix[k, j] && matrix[i, j] > 0)
                                 {
-                                    matrix[k, j] = matrix[k + 1, j];
-                                    matrix[k + 1, j] = 0;
+                                    matrix[i, j] += matrix[k, j];
+                                    matrix[k, j] = 0;
+                                    plusScore += matrix[i, j];
                                     isMoved = true;
+                                    break;
                                 }
                             }
                         }
@@ -185,22 +184,21 @@ namespace _2048
                     {
                         for (int i = matrix.GetLength(0) - 1; i > 0; i--)
                         {
-                            for (int k = 1; k <= i; k++)
+                            for (int k = i-1; k >= 0; k--)
                             {
-                                if (matrix[k, j] == 0 && matrix[k - 1, j] > 0)
+                                if (matrix[i, j] == 0 && matrix[k, j] > 0)
                                 {
+                                    matrix[i, j] = matrix[k, j];
+                                    matrix[k, j] = 0;
                                     isMoved = true;
-                                    matrix[k, j] = matrix[k - 1, j];
-                                    matrix[k - 1, j] = 0;
                                 }
-
-                                if (matrix[k, j] == matrix[k - 1, j] && matrix[k, j] > 0)
+                                if (matrix[i, j] == matrix[k, j] && matrix[i, j] > 0)
                                 {
-
+                                    matrix[i, j] += matrix[k, j];
+                                    matrix[k, j] = 0;
+                                    plusScore += matrix[i, j];
                                     isMoved = true;
-                                    matrix[k, j] += matrix[k - 1, j];
-                                    matrix[k - 1, j] = 0;
-                                    plusScore += matrix[k, j];
+                                    break;
                                 }
                             }
                         }
@@ -211,21 +209,21 @@ namespace _2048
                     {
                         for (int j = 0; j < matrix.GetLength(1) - 1; j++)
                         {
-                            for (int k = j; k >= 0; k--)
+                            for (int k = j+1; k < matrix.GetLength(1); k++)
                             {
-                                if (matrix[i, k] == 0 && matrix[i, k + 1] > 0)
+                                if (matrix[i, j] == 0 && matrix[i, k] > 0)
                                 {
                                     isMoved = true;
-                                    matrix[i, k] = matrix[i, k + 1];
-                                    matrix[i, k + 1] = 0;
+                                    matrix[i, j] = matrix[i, k];
+                                    matrix[i, k] = 0;
                                 }
-
-                                if (matrix[i, k] == matrix[i, k + 1] && matrix[i, k] > 0)
+                                if (matrix[i, j] == matrix[i, k] && matrix[i, j] > 0)
                                 {
                                     isMoved = true;
-                                    matrix[i, k] += matrix[i, k + 1];
-                                    matrix[i, k + 1] = 0;
-                                    plusScore += matrix[i, k];
+                                    matrix[i, j] += matrix[i, k];
+                                    matrix[i, k] = 0;
+                                    plusScore += matrix[i, j];
+                                    break;
                                 }
                             }
                         }
@@ -236,21 +234,21 @@ namespace _2048
                     {
                         for (int j = matrix.GetLength(1) - 1; j > 0; j--)
                         {
-                            for (int k = 1; k <= j; k++)
+                            for (int k = j-1; k >= 0 ; k--)
                             {
-
-                                if (matrix[i, k] == matrix[i, k - 1] && matrix[i, k] > 0)
+                                if (matrix[i, j] == 0 && matrix[i, k] > 0)
                                 {
                                     isMoved = true;
-                                    matrix[i, k] += matrix[i, k - 1];
-                                    matrix[i, k - 1] = 0;
-                                    plusScore += matrix[i, k];
+                                    matrix[i, j] = matrix[i, k];
+                                    matrix[i, k] = 0;
                                 }
-                                if (matrix[i, k] == 0 && matrix[i, k - 1] > 0)
+                                if (matrix[i, j] == matrix[i, k] && matrix[i, j] > 0)
                                 {
                                     isMoved = true;
-                                    matrix[i, k] = matrix[i, k - 1];
-                                    matrix[i, k - 1] = 0;
+                                    matrix[i, j] += matrix[i, k];
+                                    matrix[i, k] = 0;
+                                    plusScore += matrix[i, j];
+                                    break;
                                 }
                             }
                         }
